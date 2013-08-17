@@ -7,8 +7,20 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @sort_column = params[:sort]
-    @movies = Movie.order(params[:sort])
+    @all_ratings = Movie.get_ratings
+    # @all_ratings will be ['G','PG','PG-13','R']
+
+    @ratings = params[:ratings] ? params[:ratings].keys : nil
+    # @ratings will be something like ["G", "PG-13"] or nil
+
+    #raise params.inspect # shows the value of params
+    #raise @ratings.inspect # shows the value of ratings
+
+    @ratings_hash = Hash.new()
+    @ratings.each { |r| @ratings_hash[r] = 1}
+    # @ratings_hash will be something like {"G"=>1, "PG"=>1}
+
+    @movies = Movie.where(rating: @ratings).order(params[:sort])
   end
 
   def new
